@@ -10,6 +10,8 @@ module org.example.practica_javafx_bbdd {
     requires org.kordamp.bootstrapfx.core;
     requires eu.hansolo.tilesfx;
     requires com.almasb.fxgl.all;
+    requires java.sql;
+    requires static lombok;
 
     opens org.example.practica_javafx_bbdd to javafx.fxml;
     exports org.example.practica_javafx_bbdd;
