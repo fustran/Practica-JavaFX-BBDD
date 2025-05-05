@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="SonarLintProjectSettings">
+    <option name="moduleMapping">
+      <map>
+        <entry key="Practica2_JavaFX_BBDD" value="practica_JavaFX_BBDD" />
+      </map>
+    </option>
+  </component>
+</project>
