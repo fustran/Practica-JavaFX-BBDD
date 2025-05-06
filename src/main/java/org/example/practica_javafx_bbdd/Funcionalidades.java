@@ -73,19 +73,30 @@ public class Funcionalidades {
     // Insertar
     public static void insertar(Connection conexion, Estudiante estudiante) {
 
-        String query = "INSERT INTO estudiante (nia, nombre, fechaNacimiento) VALUES (?, ?, ?)";
 
-        try (PreparedStatement statement = conexion.prepareStatement(query)) {
+        StringBuilder query = new StringBuilder();
+        query.append("INSERT INTO estudiante (nia, nombre, fechaNacimiento) VALUES ('");
 
-            statement.setInt(1, estudiante.getNia());
-            statement.setString(2, estudiante.getNombre());
-            statement.setObject(3, estudiante.getFechaNacimiento());
+        query.append(estudiante.getNia());
+        query.append("','");
+        query.append(estudiante.getNombre());
+        query.append("','");
+        query.append(estudiante.getFechaNacimiento());
+        query.append("')");
 
-            statement.executeUpdate();
+
+        Statement statement;
+
+        try {
+            statement = conexion.createStatement();
+            statement.executeUpdate(query.toString());
+
+            out.println("Fila insertada con éxito...");
 
         } catch (SQLException e) {
             out.println(e.getMessage());
             throw new RuntimeException(e);
         }
+
     }
 }

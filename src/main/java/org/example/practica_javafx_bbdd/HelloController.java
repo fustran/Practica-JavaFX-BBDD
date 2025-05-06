@@ -1,6 +1,7 @@
 package org.example.practica_javafx_bbdd;
 
 import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import java.sql.Connection;
@@ -31,6 +32,19 @@ public class HelloController {
     @FXML
     private DatePicker field_Date;
 
+    @FXML
+    private Button editar_Button;
+
+    @FXML
+    private Button eliminar_Button;
+
+    @FXML
+    private Button insertar_Button;
+
+    @FXML
+    private Button guardar_Button;
+
+
     //private ObservableList<Estudiante> listaEstudiantes = FXCollections.observableArrayList();
 
     @FXML
@@ -58,5 +72,50 @@ public class HelloController {
         Funcionalidades.insertar(conexion, estudiante);
         System.out.println("Estudiante insertado con éxito");
 
+        textField_Nombre.clear();
+        textField_Nia.clear();
+        field_Date.setValue(null);
+
+        tabla_Estudiantes.setItems(Funcionalidades.consultar(conexion));
+
     }
+
+    @FXML
+    protected void onEditarButtonClick(ActionEvent actionEvent){
+
+        guardar_Button.setDisable(false);
+        insertar_Button.setDisable(true);
+
+        Estudiante estudianteSeleccionado = tabla_Estudiantes.getSelectionModel().getSelectedItem();
+
+        if (estudianteSeleccionado != null){
+            textField_Nia.setText(String.valueOf(estudianteSeleccionado.getNia()));
+            textField_Nombre.setText(estudianteSeleccionado.getNombre());
+            field_Date.setValue(estudianteSeleccionado.getFechaNacimiento());
+        }else{
+            System.out.printf("No hay ninguna fila seleccionada...");
+        }
+    }
+
+    @FXML
+    protected void onInsertarButtonClick(ActionEvent actionEvent){
+
+
+    }
+
+    @FXML
+    protected void onEliminarButtonClick(ActionEvent actionEvent){
+
+
+    }
+
+    @FXML
+    protected void onGuardarButtonClick(ActionEvent actionEvent){
+
+        guardar_Button.setDisable(true);
+        insertar_Button.setDisable(false);
+    }
+
+
+
 }
