@@ -45,9 +45,6 @@ public class HelloController {
     private Button guardar_Button;
 
 
-
-    //private ObservableList<Estudiante> listaEstudiantes = FXCollections.observableArrayList();
-
     @FXML
     private void initialize(){
 
@@ -58,7 +55,6 @@ public class HelloController {
         tabla_FechaNacimiento.setCellValueFactory(data -> new ReadOnlyObjectWrapper<>(data.getValue().getFechaNacimiento()));
 
         tabla_Estudiantes.setItems(Funcionalidades.consultar(conexion));
-
     }
 
     @FXML
@@ -78,8 +74,8 @@ public class HelloController {
         field_Date.setValue(null);
 
         tabla_Estudiantes.setItems(Funcionalidades.consultar(conexion));
-
     }
+
 
     static int niaAnterior;
 
@@ -119,7 +115,6 @@ public class HelloController {
         field_Date.setValue(null);
 
         tabla_Estudiantes.setItems(Funcionalidades.consultar(conexion));
-
     }
 
     @FXML
@@ -134,7 +129,6 @@ public class HelloController {
         }
 
         tabla_Estudiantes.setItems(Funcionalidades.consultar(conexion));
-
     }
 
     @FXML
@@ -143,7 +137,4 @@ public class HelloController {
         guardar_Button.setDisable(true);
         insertar_Button.setDisable(false);
     }
-
-
-
 }
