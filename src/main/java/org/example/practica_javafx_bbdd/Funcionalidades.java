@@ -99,4 +99,55 @@ public class Funcionalidades {
         }
 
     }
+
+    public static void modificar(Connection conexion, Estudiante estudiante, int nia){
+
+        StringBuilder query = new StringBuilder();
+
+        query.append("UPDATE estudiante SET Nia = '")
+                .append(estudiante.getNia())
+                .append("', Nombre = '")
+                .append(estudiante.getNombre())
+                .append("', FechaNacimiento = '")
+                .append(estudiante.getFechaNacimiento())
+                .append("' WHERE nia = '" + nia);
+
+        out.printf(query.toString());
+
+        Statement statement;
+
+        try {
+            statement = conexion.createStatement();
+            statement.executeUpdate(query.toString());
+
+            out.println("Fila Modificada con éxito...");
+
+        } catch (SQLException e) {
+            out.println(e.getMessage());
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    public static void borrar(Connection conexion, Estudiante estudiante){
+
+        StringBuilder query = new StringBuilder();
+
+        query.append("DELETE FROM estudiante WHERE nia = '")
+                .append(estudiante.getNia())
+                .append("'");
+
+        Statement statement;
+
+        try {
+            statement = conexion.createStatement();
+            statement.executeUpdate(query.toString());
+
+            out.println("Fila Eliminada con éxito...");
+
+        } catch (SQLException e) {
+            out.println(e.getMessage());
+            throw new RuntimeException(e);
+        }
+    }
 }

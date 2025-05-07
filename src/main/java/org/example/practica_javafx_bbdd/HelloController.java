@@ -45,6 +45,7 @@ public class HelloController {
     private Button guardar_Button;
 
 
+
     //private ObservableList<Estudiante> listaEstudiantes = FXCollections.observableArrayList();
 
     @FXML
@@ -80,6 +81,8 @@ public class HelloController {
 
     }
 
+    static int niaAnterior;
+
     @FXML
     protected void onEditarButtonClick(ActionEvent actionEvent){
 
@@ -88,24 +91,49 @@ public class HelloController {
 
         Estudiante estudianteSeleccionado = tabla_Estudiantes.getSelectionModel().getSelectedItem();
 
+        niaAnterior = estudianteSeleccionado.getNia();
+
         if (estudianteSeleccionado != null){
             textField_Nia.setText(String.valueOf(estudianteSeleccionado.getNia()));
             textField_Nombre.setText(estudianteSeleccionado.getNombre());
             field_Date.setValue(estudianteSeleccionado.getFechaNacimiento());
         }else{
-            System.out.printf("No hay ninguna fila seleccionada...");
+            System.out.println("No hay ninguna fila seleccionada...");
         }
     }
 
     @FXML
     protected void onInsertarButtonClick(ActionEvent actionEvent){
 
+        int nia =Integer.parseInt(textField_Nia.getText());
+        String nombre = textField_Nombre.getText();
+        LocalDate fechaNacimiento = field_Date.getValue();
+
+        Estudiante estudiante = new Estudiante(nia, nombre, fechaNacimiento);
+
+        Funcionalidades.modificar(conexion, estudiante, niaAnterior);
+        System.out.println("Estudiante insertado con éxito");
+
+        textField_Nombre.clear();
+        textField_Nia.clear();
+        field_Date.setValue(null);
+
+        tabla_Estudiantes.setItems(Funcionalidades.consultar(conexion));
 
     }
 
     @FXML
     protected void onEliminarButtonClick(ActionEvent actionEvent){
 
+        Estudiante estudianteSeleccionado = tabla_Estudiantes.getSelectionModel().getSelectedItem();
+
+        if (estudianteSeleccionado != null) {
+            Funcionalidades.borrar(conexion, estudianteSeleccionado);
+        }else {
+            System.out.println("No hay ningún estudiante seleccionado...");
+        }
+
+        tabla_Estudiantes.setItems(Funcionalidades.consultar(conexion));
 
     }
 
