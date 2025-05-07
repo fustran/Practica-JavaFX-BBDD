@@ -56,7 +56,8 @@ public class Funcionalidades {
             while (resultado.next()){
                 int nia = resultado.getInt("Nia");
                 String nombre = resultado.getString("Nombre");
-                LocalDate fechaNacimiento = resultado.getDate("fechaNacimiento").toLocalDate();
+                Date fechaSQL = resultado.getDate("fechaNacimiento");
+                LocalDate fechaNacimiento = (fechaSQL != null) ? fechaSQL.toLocalDate() : null;
 
                 out.println("NIA: " + nia + ", NOMBRE: " + nombre + ", FECHA NACIMIENTO: " + fechaNacimiento);
                 listaEstudiantes.add(new Estudiante(nia, nombre, fechaNacimiento));
@@ -67,12 +68,10 @@ public class Funcionalidades {
         }
 
         return listaEstudiantes;
-
     }
 
     // Insertar
     public static void insertar(Connection conexion, Estudiante estudiante) {
-
 
         StringBuilder query = new StringBuilder();
         query.append("INSERT INTO estudiante (nia, nombre, fechaNacimiento) VALUES ('");
@@ -83,7 +82,6 @@ public class Funcionalidades {
         query.append("','");
         query.append(estudiante.getFechaNacimiento());
         query.append("')");
-
 
         Statement statement;
 
@@ -100,17 +98,30 @@ public class Funcionalidades {
 
     }
 
-    public static void modificar(Connection conexion, Estudiante estudiante, int nia){
+    public static void modificar(Connection conexion, Estudiante estudiante, int niaAnterior){
 
         StringBuilder query = new StringBuilder();
 
-        query.append("UPDATE estudiante SET Nia = '")
+        query.append("UPDATE estudiante SET ")
+                .append("nia = '")
                 .append(estudiante.getNia())
-                .append("', Nombre = '")
+
+                .append("', ")
+
+                .append("nombre = '")
                 .append(estudiante.getNombre())
-                .append("', FechaNacimiento = '")
+
+                .append("', ")
+
+                .append("fechaNacimiento = '")
                 .append(estudiante.getFechaNacimiento())
-                .append("' WHERE nia = '" + nia);
+
+                .append("' ")
+
+                .append("WHERE nia = '")
+                .append(niaAnterior)
+
+                .append("'");
 
         out.printf(query.toString());
 
@@ -126,7 +137,6 @@ public class Funcionalidades {
             out.println(e.getMessage());
             throw new RuntimeException(e);
         }
-
     }
 
     public static void borrar(Connection conexion, Estudiante estudiante){
@@ -134,8 +144,8 @@ public class Funcionalidades {
         StringBuilder query = new StringBuilder();
 
         query.append("DELETE FROM estudiante WHERE nia = '")
-                .append(estudiante.getNia())
-                .append("'");
+            .append(estudiante.getNia())
+            .append("'");
 
         Statement statement;
 
