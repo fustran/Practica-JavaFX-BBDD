@@ -95,7 +95,6 @@ public class Funcionalidades {
             out.println(e.getMessage());
             throw new RuntimeException(e);
         }
-
     }
 
     public static void modificar(Connection conexion, Estudiante estudiante, int niaAnterior){

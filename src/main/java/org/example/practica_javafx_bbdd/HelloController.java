@@ -1,3 +1,4 @@
+// HelloController.java
 package org.example.practica_javafx_bbdd;
 
 import javafx.beans.property.ReadOnlyObjectWrapper;
@@ -28,10 +29,9 @@ public class HelloController {
     @FXML private Button guardar_Button;
 
 
+    // INICIAR
     @FXML
-    private void initialize(){
-
-        Connection conexion = Funcionalidades.conectar();
+    private void initialize() {
 
         tabla_Nia.setCellValueFactory(data ->
                 new javafx.beans.property.SimpleIntegerProperty(data.getValue().getNia()).asObject());
@@ -40,44 +40,35 @@ public class HelloController {
         tabla_FechaNacimiento.setCellValueFactory(data ->
                 new ReadOnlyObjectWrapper<>(data.getValue().getFechaNacimiento()));
 
-        // Refrescar la tabla
         tabla_Estudiantes.setItems(Funcionalidades.consultar(conexion));
-
         guardar_Button.setDisable(true);
     }
 
-
-    // INSERTAR NUEVO ESTUDIANTE
+    // INSERTAR ESTUDIANTE
     @FXML
-    protected void onInsertarButtonClick(ActionEvent actionEvent){
+    protected void onInsertarButtonClick(ActionEvent event) {
 
-        int nia =Integer.parseInt(textField_Nia.getText());
-        String nombre = textField_Nombre.getText();
-        LocalDate fechaNacimiento = field_Date.getValue();
+        if (validarCampos()) return;
 
-        Estudiante estudiante = new Estudiante(nia, nombre, fechaNacimiento);
+        int nia = Integer.parseInt(textField_Nia.getText().trim());
+        String nombre = textField_Nombre.getText().trim();
+        LocalDate fecha = field_Date.getValue();
 
-        Funcionalidades.insertar(conexion, estudiante);
+        Funcionalidades.insertar(conexion, new Estudiante(nia, nombre, fecha));
         System.out.println("Estudiante insertado con éxito");
 
-        // Refrescar la tabla
         tabla_Estudiantes.setItems(Funcionalidades.consultar(conexion));
-
-        textField_Nia.clear();
-        textField_Nombre.clear();
-        field_Date.setValue(null);
-
+        limpiarCampos();
     }
 
-
-    // EDITAR NUEVO ESTUDIANTE
+    // EDITAR ESTUDIANTE
     @FXML
-    protected void onEditarButtonClick(ActionEvent actionEvent){
+    protected void onEditarButtonClick(ActionEvent event) {
 
         Estudiante estudianteSeleccionado = tabla_Estudiantes.getSelectionModel().getSelectedItem();
 
         if (estudianteSeleccionado == null) {
-            System.out.println("No hay ninguna fila seleccionada...");
+            mostrarMensajeError("Selección vacía", "Selecciona un estudiante para editar.");
             return;
         }
 
@@ -91,45 +82,80 @@ public class HelloController {
         insertar_Button.setDisable(true);
     }
 
-
-    // GUARDAR CAMBIOS (UPDATE)
+    // GUARDAR ESTUDIANTE
     @FXML
-    protected void onGuardarButtonClick(ActionEvent actionEvent) {
+    protected void onGuardarButtonClick(ActionEvent event) {
 
-        int nia =Integer.parseInt(textField_Nia.getText());
-        String nombre = textField_Nombre.getText();
-        LocalDate fechaNacimiento = field_Date.getValue();
+        if (validarCampos()) return;
 
-        Estudiante estudiante = new Estudiante(nia, nombre, fechaNacimiento);
+        int nia = Integer.parseInt(textField_Nia.getText().trim());
+        String nombre = textField_Nombre.getText().trim();
+        LocalDate fecha = field_Date.getValue();
 
-        Funcionalidades.modificar(conexion, estudiante, niaAnterior);
-        System.out.println("Estudiante insertado con éxito");
+        Funcionalidades.modificar(conexion, new Estudiante(nia, nombre, fecha), niaAnterior);
+        System.out.println("Estudiante modificado con éxito");
 
-        // Refrescar la tabla
         tabla_Estudiantes.setItems(Funcionalidades.consultar(conexion));
 
-        textField_Nombre.clear();
-        textField_Nia.clear();
-        field_Date.setValue(null);
+        limpiarCampos();
 
         guardar_Button.setDisable(true);
         insertar_Button.setDisable(false);
     }
 
-
-    // ELIMINAR ESTUDIANTE SELECCIONADO
+    // ELIMINAR ESTUDIANTE
     @FXML
-    protected void onEliminarButtonClick(ActionEvent actionEvent){
+    protected void onEliminarButtonClick(ActionEvent event) {
 
         Estudiante estudianteSeleccionado = tabla_Estudiantes.getSelectionModel().getSelectedItem();
 
-        if (estudianteSeleccionado != null) {
-            Funcionalidades.borrar(conexion, estudianteSeleccionado);
-        }else {
-            System.out.println("No hay ningún estudiante seleccionado...");
+        if (estudianteSeleccionado == null) {
+            mostrarMensajeError("Selección vacía", "Seleccione un estudiante para eliminar.");
+            return;
         }
 
-        // Refrescar la tabla
+        Funcionalidades.borrar(conexion, estudianteSeleccionado);
+        System.out.println("Estudiante eliminado con éxito");
+
         tabla_Estudiantes.setItems(Funcionalidades.consultar(conexion));
+    }
+
+
+    // Validar NIA y NOMBRE, muestra alertas si hay errores
+    private boolean validarCampos() {
+
+        String niaText = textField_Nia.getText().trim();
+        String nombre = textField_Nombre.getText().trim();
+
+        if (!niaText.matches("\\d{8}")) {
+            mostrarMensajeError("NIA inválido", "El NIA debe contener 8 dígitos.");
+            return true;
+        }
+        if (!nombre.matches("[A-Za-zÁÉÍÓÚáéíóúÑñ ]+")) {
+            mostrarMensajeError("Nombre inválido", "El nombre debe contener solo letras y espacios.");
+            return true;
+        }
+        if (field_Date.getValue() == null) {
+            mostrarMensajeError("Fecha vacía", "Seleccione una fecha de nacimiento.");
+            return true;
+        }
+
+        return false;
+    }
+
+    // Limpia los campos de entrada
+    private void limpiarCampos() {
+        textField_Nia.clear();
+        textField_Nombre.clear();
+        field_Date.setValue(null);
+    }
+
+    // Muestra un Alerta de error con título y mensaje
+    private void mostrarMensajeError(String titulo, String mensaje) {
+        Alert alerta = new Alert(Alert.AlertType.ERROR);
+        alerta.setTitle(titulo);
+        alerta.setHeaderText(null);
+        alerta.setContentText(mensaje);
+        alerta.showAndWait();
     }
 }
